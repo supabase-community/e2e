@@ -3,13 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "supabase",
+  "license": "MIT",
   "packageManager": "pnpm@10.10.0",
+  "scripts": {
+    "test:prod": "cp .env.prod .env && playwright test",
+    "test:staging": "cp .env.staging .env && playwright test",
+    "test:prod:ui": "cp .env.prod .env && playwright test --ui",
+    "test:staging:ui": "cp .env.staging .env && playwright test --ui",
+    "setup:prod": "cp .env.prod .env && playwright test --project=setup",
+    "setup:staging": "cp .env.staging .env && playwright test --project=setup"
+  },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.15.29"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
   }
 }
