@@ -28,32 +28,42 @@ End to end tests.
 4. **Run authentication setup:**
    ```sh
    # For production
-   pnpm run setup:prod
+   npm run setup:prod
 
    # For staging
-   pnpm run setup:staging
+   npm run setup:staging
    ```
 
 ## Running Tests
 
+### Production Environment
 ```sh
-pnpm exec playwright test
-  Runs all end-to-end tests with authentication.
+npm run test:prod
+  Runs all tests against production environment
 
-pnpm exec playwright test --ui
-  Starts the interactive UI mode (recommended for development).
+npm run test:prod:ui
+  Runs tests in interactive UI mode against production
+```
 
-pnpm exec playwright test --project=chromium
-  Runs tests only on Desktop Chrome.
+### Staging Environment
+```sh
+npm run test:staging
+  Runs all tests against staging environment
 
-pnpm exec playwright test supabase-dashboard
-  Runs tests in a specific file.
+npm run test:staging:ui
+  Runs tests in interactive UI mode against staging
+```
 
+### Additional Commands
+```sh
 pnpm exec playwright test --debug
-  Runs tests in debug mode with step-by-step execution.
+  Runs tests in debug mode with step-by-step execution
 
 pnpm exec playwright codegen
-  Auto generate tests with Codegen.
+  Auto generate tests with Codegen
+
+pnpm exec playwright test --project=setup
+  Run only the authentication setup
 ```
 
 ## Notes
