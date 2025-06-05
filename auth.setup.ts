@@ -1,28 +1,27 @@
-import { test as setup, expect } from "@playwright/test";
+import { test as setup, expect } from "@playwright/test"
 
-const authFile = "playwright/.auth/user.json";
-const baseUrl = process.env.SUPABASE_BASE_URL || "https://supabase.com";
+const authFile = "playwright/.auth/user.json"
+const baseUrl = process.env.SUPABASE_BASE_URL || "https://supabase.com"
 
 setup("authenticate", async ({ page }) => {
+  setup.setTimeout(10_000) // Staging can be slow, so increase timeout
+
   // Navigate to login page
-  await page.goto(`${baseUrl}/dashboard/sign-in`);
+  await page.goto(`${baseUrl}/dashboard/sign-in`)
 
   // Fill in your credentials
   await page.fill(
     'input[type="email"]',
-    process.env.SUPABASE_EMAIL || "pcopplestone",
-  );
-  await page.fill(
-    'input[type="password"]',
-    process.env.SUPABASE_PASSWORD || "",
-  );
+    process.env.SUPABASE_EMAIL || "pcopplestone"
+  )
+  await page.fill('input[type="password"]', process.env.SUPABASE_PASSWORD || "")
 
   // Click sign in button
-  await page.getByRole("button", { name: "Sign In" }).click();
+  await page.getByRole("button", { name: "Sign In" }).click()
 
   // Wait for successful login (navigate away from sign-in page)
-  await expect(page).toHaveURL(/\/dashboard(?!\/sign-in)/);
+  await expect(page).toHaveURL(/\/dashboard(?!\/sign-in)/)
 
   // Save signed-in state
-  await page.context().storageState({ path: authFile });
-});
+  await page.context().storageState({ path: authFile })
+})
