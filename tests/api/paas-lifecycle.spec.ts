@@ -51,10 +51,8 @@ test.describe.serial("Database Rollback", METADATA, () => {
       !projectRef || !accessToken,
       "Missing SUPABASE_PROJECT_REF or SUPABASE_ACCESS_TOKEN environment variables"
     )
-    console.log(
-      `🚀 Starting backup & recovery test suite for table: ${tableName}`
-    )
-    console.log(`📍 Backup checkpoint name: ${backupCheckpointName}`)
+    // Test suite will use table: ${tableName}
+    // Backup checkpoint: ${backupCheckpointName}
   })
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -65,7 +63,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
   }) => {
     const backupEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/database/backups`
 
-    console.log("🎯 Creating backup checkpoint before any database changes...")
+    // Create backup checkpoint before making any database changes
     const backupResponse = await request.post(backupEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -78,7 +76,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(backupResponse.status()).toBe(201)
     const backupData = await backupResponse.json()
-    console.log("✅ Backup checkpoint created successfully:", backupData)
+    // Backup checkpoint created successfully
 
     // Store the backup checkpoint name for later tests
     checkpointName = backupData.name || backupCheckpointName
@@ -91,7 +89,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
     const migrationEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/database/migrations`
     const idempotencyKey = `migration_${tableName}_${testId}`
 
-    console.log("📝 Executing database migration to create new table...")
+    // Execute database migration to create new table with RLS
     const migrationResponse = await request.post(migrationEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -116,7 +114,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(migrationResponse.status()).toBe(200)
     const migrationData = await migrationResponse.json()
-    console.log("✅ Migration executed successfully:", migrationData)
+    // Migration executed successfully
   })
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -125,7 +123,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
   test("Insert sample data into new table", async ({ request }) => {
     const queryEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/database/query`
 
-    console.log("📊 Inserting sample data into the new table...")
+    // Insert sample test data into the newly created table
     const insertResponse = await request.post(queryEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -145,7 +143,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(insertResponse.status()).toBe(201)
     const insertData = await insertResponse.json()
-    console.log("✅ Sample data inserted successfully:", insertData)
+    // Sample data inserted successfully
   })
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -154,7 +152,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
   test("Verify table exists and contains data", async ({ request }) => {
     const queryEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/database/query`
 
-    console.log("🔍 Verifying table exists and contains expected data...")
+    // Verify table exists and contains the expected test data
     const verifyResponse = await request.post(queryEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -174,7 +172,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(verifyResponse.status()).toBe(201)
     const verifyData = await verifyResponse.json()
-    console.log("✅ Post-migration verification completed:", verifyData)
+    // Post-migration verification completed
 
     // Verify we received a valid response with our test data
     expect(verifyData).toBeDefined()
@@ -194,7 +192,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
     // Use the checkpoint name from backup creation (fallback to generated name if not set)
     const targetCheckpoint = checkpointName || backupCheckpointName
 
-    console.log(`🔄 Rolling back to backup checkpoint: ${targetCheckpoint}...`)
+    // Initiate rollback to backup checkpoint: ${targetCheckpoint}
     const rollbackResponse = await request.post(undoEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -207,12 +205,10 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(rollbackResponse.status()).toBe(200)
     const rollbackData = await rollbackResponse.json()
-    console.log("✅ Rollback initiated successfully:", rollbackData)
+    // Rollback initiated successfully
 
-    // Allow time for rollback to complete (this might take a moment)
-    console.log("⏳ Waiting for rollback to complete...")
-
-    await new Promise((resolve) => setTimeout(resolve, 5000)) // Wait 5 seconds
+    // Allow time for rollback operation to complete
+    await new Promise((resolve) => setTimeout(resolve, 5000))
   })
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -221,7 +217,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
   test.skip("Verify rollback removed the table", async ({ request }) => {
     const queryEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/database/query`
 
-    console.log("🔍 Verifying rollback: checking if table was removed...")
+    // Verify rollback success by checking if table was removed
     const postRollbackResponse = await request.post(queryEndpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -240,7 +236,7 @@ test.describe.serial("Database Rollback", METADATA, () => {
 
     expect(postRollbackResponse.status()).toBe(201)
     const postRollbackData = await postRollbackResponse.json()
-    console.log("✅ Rollback verification completed:", postRollbackData)
+    // Rollback verification completed
 
     // The table should not exist after rollback
     // TODO: Add specific assertion based on actual API response structure
@@ -252,12 +248,8 @@ test.describe.serial("Database Rollback", METADATA, () => {
   // TEST SUITE COMPLETION
   // ═══════════════════════════════════════════════════════════════════════════════
   test.afterAll(async () => {
-    console.log(
-      "🎉 Backup & recovery lifecycle test suite completed successfully!"
-    )
-    console.log(
-      "✅ Demonstrated: Create checkpoint → Migrate → Insert data → Rollback → Verify"
-    )
+    // Backup & recovery lifecycle test suite completed successfully
+    // Demonstrated: Create checkpoint → Migrate → Insert data → Rollback → Verify
 
     // No cleanup needed - rollback should have handled everything
   })
