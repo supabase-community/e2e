@@ -1,9 +1,3 @@
-import { test, expect } from "@playwright/test"
-
-const baseApiUrl = process.env.SUPABASE_BASE_API_URL || ""
-const projectRef = process.env.SUPABASE_PROJECT_REF || ""
-const accessToken = process.env.SUPABASE_ACCESS_TOKEN || ""
-
 /**
  * Database Backup & Recovery Lifecycle Test Suite
  *
@@ -31,8 +25,14 @@ const accessToken = process.env.SUPABASE_ACCESS_TOKEN || ""
  * against a test environment to avoid affecting production data.
  */
 
+import { test, expect } from "@playwright/test"
+
+const baseApiUrl = process.env.SUPABASE_BASE_API_URL || ""
+const projectRef = process.env.SUPABASE_PROJECT_REF || ""
+const accessToken = process.env.SUPABASE_ACCESS_TOKEN || ""
+
 const METADATA = {
-  tag: ["@backup", "@recovery", "@rollback"],
+  tag: ["@api", "@database", "@backup", "@recovery", "@rollback"],
   annotation: [{ type: "Docs", description: "https://supabase.com/docs" }],
 }
 
