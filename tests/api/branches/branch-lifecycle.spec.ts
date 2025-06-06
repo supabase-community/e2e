@@ -97,36 +97,6 @@ test.skip("Branch Database Lifecycle", METADATA, () => {
   })
 
   // ═══════════════════════════════════════════════════════════════════════════════
-  // Enable Branching on Project
-  // ═══════════════════════════════════════════════════════════════════════════════
-  test("Enable branching on project", async ({ request }) => {
-    const branchingConfigEndpoint = `${baseApiUrl}/v1/projects/${projectRef}/config/database`
-
-    const enableResponse = await request.patch(branchingConfigEndpoint, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      data: {
-        branching_enabled: true,
-      },
-    })
-
-    // Debug: log response if not 200
-    if (enableResponse.status() !== 200) {
-      const errorData = await enableResponse.json()
-      console.log(
-        `Branching enable failed with status ${enableResponse.status()}:`,
-        errorData
-      )
-    }
-
-    expect(enableResponse.status()).toBe(200)
-    const enableData = await enableResponse.json()
-    expect(enableData).toBeDefined()
-  })
-
-  // ═══════════════════════════════════════════════════════════════════════════════
   // Create Database Branch
   // ═══════════════════════════════════════════════════════════════════════════════
   test("Create database branch", async ({ request }) => {
@@ -136,6 +106,8 @@ test.skip("Branch Database Lifecycle", METADATA, () => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
+        // TODO: remove this header when branching is enabled by default
+        "User-Agent": "supabase-mcp/e2e-test",
       },
       data: {
         branch_name: branchName,
